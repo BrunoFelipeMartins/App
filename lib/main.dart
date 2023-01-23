@@ -51,6 +51,12 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void remove(int index) {
+    setState(() {
+      widget.items.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,17 +80,26 @@ class _HomePageState extends State<HomePage> {
         itemBuilder: (context, index) {
           final item = widget.items[index];
 
-          return CheckboxListTile(
-            title: Text(item.title.toString()),
+          return Dismissible(
+            child: CheckboxListTile(
+              title: Text(item.title.toString()),
+              value: item.done,
+              onChanged: (value) {
+                //utilizado para atualizar estado da tela
+                //não pode chamar build novamente
+                setState(() {
+                  item.done = value;
+                });
+              },
+            ),
             key: Key(item.title.toString()),
-            value: item.done,
-            onChanged: (value) {
-              //utilizado para atualizar estado da tela
-              //não pode chamar build novamente
-              setState(() {
-                item.done = value;
-              });
-            },
+            background: Container(
+              color: Colors.red.withOpacity(0.2),
+              //child: Text("Exluir"),
+            ),
+            onDismissed: ((direction) {
+              remove(index);
+            }),
           );
         },
       ),
